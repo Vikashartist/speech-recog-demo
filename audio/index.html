@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speech Recognition</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      color: #333;
+    }
+    button {
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #555;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Speech Recognition Demo</h1>
+  <button id="start-btn">Start Listening</button>
+  <div class="result" id="result">Your speech will appear here...</div>
+  <div class="error" id="error"></div>
+
+  <script>
+    const startBtn = document.getElementById('start-btn');
+    const resultDiv = document.getElementById('result');
+    const errorDiv = document.getElementById('error');
+
+    // Check for SpeechRecognition API support
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      startBtn.addEventListener('click', () => {
+        recognition.start();
+        resultDiv.textContent = "Listening...";
+        errorDiv.textContent = "";
+      });
+
+      recognition.addEventListener('result', (event) => {
+        const transcript = event.results[0][0].transcript;
+        resultDiv.textContent = `You said: "${transcript}"`;
+      });
+
+      recognition.addEventListener('error', (event) => {
+        errorDiv.textContent = `Error: ${event.error}`;
+      });
+
+      recognition.addEventListener('end', () => {
+        resultDiv.textContent += " (Finished)";
+      });
+    } else {
+      resultDiv.textContent = "Speech Recognition API is not supported in your browser.";
+      startBtn.disabled = true;
+    }
+  </script>
+</body>
+</html>
